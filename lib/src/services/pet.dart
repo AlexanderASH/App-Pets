@@ -21,14 +21,12 @@ class PetService {
     }
   }
 
-  static Future<FetchPet> getPets() async {
+  static Future<FetchPet> getPets(Map<String, dynamic> query) async {
     try {
       final response = await http.get(
         ConfigHttp.getUri(
           path: PETS, 
-          queryParameters: {
-            
-          }
+          queryParameters: query
         ),
         headers: ConfigHttp.getHeaders()
       );
