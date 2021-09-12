@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-Type petFromJson(String response) => Type.fromJson(json.decode(response));
+Type typeFromJson(String response) => Type.fromJson(json.decode(response));
 
-List<Type> typesFromJson(String response) => List<Type>.from((json.decode(response).map((type) => type.fromJson(type))));
+List<Type> typesFromJson(String response) => List<Type>.from(json.decode(response)["types"].map((type) => Type.fromJson(type)));
 
 String typeToJson(Type type) => json.encode(type.toJson());
 

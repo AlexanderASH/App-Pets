@@ -1,5 +1,8 @@
 import 'package:app_pets/src/commons/validations/input.dart';
+import 'package:app_pets/src/models/Pet.dart';
 import 'package:app_pets/src/models/Type.dart';
+import 'package:app_pets/src/services/pet.dart';
+import 'package:app_pets/src/services/type.dart';
 import 'package:flutter/material.dart';
 
 class PetFormPage extends StatefulWidget {
@@ -114,9 +117,9 @@ class _FormPageState extends State<PetFormPage> {
               ),
               SizedBox(height: 10.0,),
               FutureBuilder<List<Type>>(
-                future: null,
+                future: TypeService.getTypes(),
                 initialData: [],
-                builder: (context, snapshot){
+                builder: (context, snapshot) {
                   return DropdownButtonFormField<int>(
                     validator: InputValidations.validateDropDown,
                     isExpanded: true,
@@ -144,7 +147,7 @@ class _FormPageState extends State<PetFormPage> {
                   child:Text('Create'),
                   onPressed: () {
                     if (this._formKey.currentState.validate()) {
-                      // TODO: CREATE PET
+                      this._createPet();
                     }
                   },
                 ),
@@ -166,13 +169,22 @@ class _FormPageState extends State<PetFormPage> {
         )
       );
     });
-    
+
     return items;
   }
 
-  void _createpet() async {
+  void _createPet() async {
     try {
-      //TODO: Call service
+      await PetService.create(Pet(
+        name: this.name.text,
+        description: this.description.text,
+        color: this.color.text,
+        gender: this.gender.text,
+        image: this.image.text,
+        size: this.size.text,
+        typeId: this.typeId
+      ));
+      
       Navigator.pop(context);
     } catch (e) {
       ScaffoldMessenger.of(context)

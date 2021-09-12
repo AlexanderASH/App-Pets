@@ -1,4 +1,7 @@
+import 'package:app_pets/src/models/Pet.dart';
 import 'package:app_pets/src/models/Type.dart';
+import 'package:app_pets/src/services/pet.dart';
+import 'package:app_pets/src/services/type.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -11,6 +14,8 @@ class _HomePageState extends State<HomePage> {
   bool isMale;
   bool isFemale;
   bool isSelectedName;
+  List<Pet> pets;
+  int count;
 
   @override
   void initState() { 
@@ -18,7 +23,18 @@ class _HomePageState extends State<HomePage> {
     this.isFemale = false;
     this.isMale = false;
     this.isSelectedName = false;
+    this.count = 0;
+    this.pets = [];
+    this._getPets();
   }
+
+  _getPets() async {
+    FetchPet data = await PetService.getPets();
+    this.count = data.count;
+    this.pets = data.pets;
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,7 +111,7 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
                 FutureBuilder<List<Type>>(
-                  future: null,
+                  future: TypeService.getTypes(),
                   initialData: [],
                   builder: (context, snapshot){
                     return DropdownButton<int>(
@@ -116,14 +132,19 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
+          (this.pets.length > 0)
+          ?
           Expanded(
             child: ListView.builder(
-              itemCount: 20,
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
+              itemCount: this.count,
+              physics: BouncingScrollPhysics(),
               itemBuilder: (context, index) {
-                return Text("$index");
+                return this._getCardPet(this.pets[index]);
               }
             ),
           )
+          : CircularProgressIndicator()
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -151,5 +172,40 @@ class _HomePageState extends State<HomePage> {
     });
 
     return items;
+  }
+
+  Card _getCardPet(Pet pet) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+      margin: EdgeInsets.only(bottom: 10.0),
+      child: Container(
+        padding: EdgeInsets.all(10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(pet.name, style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),  
+            Row(
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.35,
+                  height: MediaQuery.of(context).size.height * 0.20,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15.0),
+                    image: DecorationImage(
+                      image: NetworkImage(pet.image),
+                      fit: BoxFit.fill
+                    )
+                  )
+                ),
+                SizedBox(width: 10.0,),
+                Flexible(child: Text(pet.description)),
+              ],
+            ),
+            Text("Gender: ${pet.gender}"),
+            Text("Type: ${pet.type.name}")
+          ],
+        ),
+      ),
+    );
   }
 }
