@@ -1,3 +1,5 @@
+import 'package:app_pets/src/pages/Home.dart';
+import 'package:app_pets/src/pages/PetForm.dart';
 import 'package:flutter/material.dart';
  
 void main() => runApp(MyApp());
@@ -7,17 +9,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Pets',
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Material App Bar'),
-        ),
-        body: Center(
-          child: Container(
-            child: Text('Hello World'),
-          ),
-        ),
+      theme: ThemeData(
+        primaryColor: Colors.pink
       ),
+      debugShowCheckedModeBanner: false,
+      initialRoute: 'home',
+      routes: {
+        'home': (_) => HomePage(),
+        'form': (_) => PetFormPage()
+      },
     );
   }
 }
